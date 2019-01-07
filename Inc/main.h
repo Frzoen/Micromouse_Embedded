@@ -101,12 +101,12 @@ void Error_Handler(void);
 #define I_MOT2_GPIO_Port GPIOB
 #define I_MOT1_Pin GPIO_PIN_1
 #define I_MOT1_GPIO_Port GPIOB
-#define MOT2_EN_Pin GPIO_PIN_13
-#define MOT2_EN_GPIO_Port GPIOB
+#define MOT1_DIR_Pin GPIO_PIN_13
+#define MOT1_DIR_GPIO_Port GPIOB
 #define MOT1_EN_Pin GPIO_PIN_14
 #define MOT1_EN_GPIO_Port GPIOB
-#define MOT1_DIR_Pin GPIO_PIN_15
-#define MOT1_DIR_GPIO_Port GPIOB
+#define MOT2_EN_Pin GPIO_PIN_15
+#define MOT2_EN_GPIO_Port GPIOB
 #define MOT1_PWM_Pin GPIO_PIN_6
 #define MOT1_PWM_GPIO_Port GPIOC
 #define MOT2_PWM_Pin GPIO_PIN_7

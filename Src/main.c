@@ -76,10 +76,11 @@
 #define MOT1_FORWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_SET)
 #define MOT1_BACKWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_RESET)
 #define MOT1_SET_SPEED(Duty) 	TIM3->CCR1 = Duty
+
 #define MOT2_ENABLE 			HAL_GPIO_WritePin(MOT2_EN_GPIO_Port, MOT2_EN_Pin, GPIO_PIN_RESET)
 #define MOT2_DISABLE 			HAL_GPIO_WritePin(MOT2_EN_GPIO_Port, MOT2_EN_Pin, GPIO_PIN_SET)
-#define MOT2_FORWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_SET)
-#define MOT2_BACKWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_RESET)
+#define MOT2_FORWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_RESET)
+#define MOT2_BACKWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_SET)
 #define MOT2_SET_SPEED(Duty)	TIM3->CCR2 = Duty
 
 /* Distance sensors */
@@ -109,8 +110,7 @@
 #define VCNL4010_INTSTAT 0x8E
 #define VCNL4010_MODTIMING 0x8F
 
-typedef enum
-{
+typedef enum {
 	VCNL4010_1_95 = 0,
 	VCNL4010_3_90625 = 1,
 	VCNL4010_7_8125 = 2,
@@ -142,12 +142,12 @@ typedef enum
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-bool 		VCNL4010_begin();
-uint8_t		VCNL4010_getLEDcurrent(void);
-void 		VCNL4010_setLEDcurrent(uint8_t c);
-void		VCNL4010_setFrequency(vcnl4010_freq f);
-uint16_t 	VCNL4010_readProximity(void);
-uint16_t 	VCNL4010_readAmbient(void);
+bool VCNL4010_begin();
+uint8_t VCNL4010_getLEDcurrent(void);
+void VCNL4010_setLEDcurrent(uint8_t c);
+void VCNL4010_setFrequency(vcnl4010_freq f);
+uint16_t VCNL4010_readProximity(void);
+uint16_t VCNL4010_readAmbient(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -159,8 +159,7 @@ uint16_t 	VCNL4010_readAmbient(void);
  * @brief  The application entry point.
  * @retval int
  */
-int main(void)
-{
+int main(void) {
 	/* USER CODE BEGIN 1 */
 
 	/* USER CODE END 1 */
@@ -171,7 +170,6 @@ int main(void)
 	HAL_Init();
 
 	/* USER CODE BEGIN Init */
-
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
@@ -193,13 +191,24 @@ int main(void)
 	LED1_OFF;
 	LED2_OFF;
 	LED3_OFF;
-	HAL_Delay(1000);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+
+	MOT1_ENABLE;
+	MOT2_ENABLE;
+	MOT1_FORWARD;
+	MOT2_FORWARD;
+	MOT1_SET_SPEED(30);
+	MOT2_SET_SPEED(30);
+
+	HAL_Delay(2000);
+	MOT1_DISABLE;
+	MOT2_DISABLE;
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	while (1)
-	{
+	while (1) {
 		LED2_TOGGLE;
 		HAL_Delay(500);
 		/* USER CODE END WHILE */
@@ -213,12 +222,9 @@ int main(void)
  * @brief System Clock Configuration
  * @retval None
  */
-void SystemClock_Config(void)
-{
-	RCC_OscInitTypeDef RCC_OscInitStruct =
-	{ 0 };
-	RCC_ClkInitTypeDef RCC_ClkInitStruct =
-	{ 0 };
+void SystemClock_Config(void) {
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
 	/**Configure the main internal regulator output voltage
 	 */
@@ -236,8 +242,7 @@ void SystemClock_Config(void)
 	RCC_OscInitStruct.PLL.PLLN = 72;
 	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
 	RCC_OscInitStruct.PLL.PLLQ = 4;
-	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	{
+	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
 		Error_Handler();
 	}
 	/**Initializes the CPU, AHB and APB busses clocks
@@ -249,34 +254,27 @@ void SystemClock_Config(void)
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-	{
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
 		Error_Handler();
 	}
 }
 
 /* USER CODE BEGIN 4 */
-bool VCNL4010_begin()
-{
+bool VCNL4010_begin() {
 }
-uint8_t VCNL4010_getLEDcurrent(void)
-{
+uint8_t VCNL4010_getLEDcurrent(void) {
 
 }
-void VCNL4010_setLEDcurrent(uint8_t c)
-{
+void VCNL4010_setLEDcurrent(uint8_t c) {
 
 }
-void VCNL4010_setFrequency(vcnl4010_freq f)
-{
+void VCNL4010_setFrequency(vcnl4010_freq f) {
 
 }
-uint16_t VCNL4010_readProximity(void)
-{
+uint16_t VCNL4010_readProximity(void) {
 
 }
-uint16_t VCNL4010_readAmbient(void)
-{
+uint16_t VCNL4010_readAmbient(void) {
 }
 /* USER CODE END 4 */
 
@@ -284,8 +282,7 @@ uint16_t VCNL4010_readAmbient(void)
  * @brief  This function is executed in case of error occurrence.
  * @retval None
  */
-void Error_Handler(void)
-{
+void Error_Handler(void) {
 	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 
