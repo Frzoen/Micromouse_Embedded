@@ -70,11 +70,21 @@
 #define LED3_OFF				HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET)
 #define LED3_TOGGLE 			HAL_GPIO_TogglePin(LED3_GPIO_Port, LED3_Pin)
 
+/* Encoder */
+#define RIGHT_ENCODER_CNT 		TIM2->CNT
+#define LEFT_ENCODER_CNT		TIM5->CNT
+
+#define MOT1_ENCODER_CNT 		TIM2->CNT
+#define MOT2_ENCODER_CNT		TIM5->CNT
+
+/* Phisical */
+#define WHEEL_DISPLACEMENT		196.035 // mm per rotation
+
 /* Motor */
 #define MOT1_ENABLE 			HAL_GPIO_WritePin(MOT1_EN_GPIO_Port, MOT1_EN_Pin, GPIO_PIN_RESET)
 #define MOT1_DISABLE 			HAL_GPIO_WritePin(MOT1_EN_GPIO_Port, MOT1_EN_Pin, GPIO_PIN_SET)
-#define MOT1_FORWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_SET)
-#define MOT1_BACKWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_RESET)
+#define MOT1_FORWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_RESET)
+#define MOT1_BACKWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_SET)
 #define MOT1_SET_SPEED(Duty) 	TIM3->CCR1 = Duty
 
 #define MOT2_ENABLE 			HAL_GPIO_WritePin(MOT2_EN_GPIO_Port, MOT2_EN_Pin, GPIO_PIN_RESET)
@@ -83,19 +93,31 @@
 #define MOT2_BACKWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_SET)
 #define MOT2_SET_SPEED(Duty)	TIM3->CCR2 = Duty
 
+#define RIGHT_ENABLE 			HAL_GPIO_WritePin(MOT1_EN_GPIO_Port, MOT1_EN_Pin, GPIO_PIN_RESET)
+#define RIGHT_DISABLE 			HAL_GPIO_WritePin(MOT1_EN_GPIO_Port, MOT1_EN_Pin, GPIO_PIN_SET)
+#define RIGHT_FORWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_RESET)
+#define RIGHT_BACKWARD 			HAL_GPIO_WritePin(MOT1_DIR_GPIO_Port, MOT1_DIR_Pin, GPIO_PIN_SET)
+#define RIGHT_SET_SPEED(Duty) 	TIM3->CCR1 = Duty
+
+#define LEFT_ENABLE 			HAL_GPIO_WritePin(MOT2_EN_GPIO_Port, MOT2_EN_Pin, GPIO_PIN_RESET)
+#define LEFT_DISABLE 			HAL_GPIO_WritePin(MOT2_EN_GPIO_Port, MOT2_EN_Pin, GPIO_PIN_SET)
+#define LEFT_FORWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_RESET)
+#define LEFT_BACKWARD 			HAL_GPIO_WritePin(MOT2_DIR_GPIO_Port, MOT2_DIR_Pin, GPIO_PIN_SET)
+#define LEFT_SET_SPEED(Duty)	TIM3->CCR2 = Duty
+
 /* Distance sensors */
-#define ENABLE_FRONT 			HAL_GPIO_WritePin(DIST3_EN_GPIO_Port, DIST3_EN_Pin, GPIO_PIN_RESET)
-#define ENABLE_RIGHT 			HAL_GPIO_WritePin(DIST1_EN_GPIO_Port, DIST1_EN_Pin, GPIO_PIN_RESET)
-#define ENABLE_LEFT				HAL_GPIO_WritePin(DIST5_EN_GPIO_Port, DIST5_EN_Pin, GPIO_PIN_RESET)
-#define ENABLE_FRONT_RIGHT		HAL_GPIO_WritePin(DIST2_EN_GPIO_Port, DIST2_EN_Pin, GPIO_PIN_RESET)
-#define ENABLE_FRONT_LEFT		HAL_GPIO_WritePin(DIST4_EN_GPIO_Port, DIST4_EN_Pin, GPIO_PIN_RESET)
+#define ENABLE_FRONT 			HAL_GPIO_WritePin(DIST3_EN_GPIO_Port, DIST3_EN_Pin, GPIO_PIN_SET)
+#define ENABLE_RIGHT 			HAL_GPIO_WritePin(DIST1_EN_GPIO_Port, DIST1_EN_Pin, GPIO_PIN_SET)
+#define ENABLE_LEFT				HAL_GPIO_WritePin(DIST5_EN_GPIO_Port, DIST5_EN_Pin, GPIO_PIN_SET)
+#define ENABLE_FRONT_RIGHT		HAL_GPIO_WritePin(DIST2_EN_GPIO_Port, DIST2_EN_Pin, GPIO_PIN_SET)
+#define ENABLE_FRONT_LEFT		HAL_GPIO_WritePin(DIST4_EN_GPIO_Port, DIST4_EN_Pin, GPIO_PIN_SET)
 #define DISABLE_FRONT			HAL_GPIO_WritePin(DIST3_EN_GPIO_Port, DIST3_EN_Pin, GPIO_PIN_RESET)
 #define DISABLE_RIGHT			HAL_GPIO_WritePin(DIST1_EN_GPIO_Port, DIST1_EN_Pin, GPIO_PIN_RESET)
 #define DISABLE_LEFT			HAL_GPIO_WritePin(DIST5_EN_GPIO_Port, DIST5_EN_Pin, GPIO_PIN_RESET)
 #define DISABLE_FRONT_RIGHT		HAL_GPIO_WritePin(DIST2_EN_GPIO_Port, DIST2_EN_Pin, GPIO_PIN_RESET)
 #define DISABLE_FRONT_LEFT		HAL_GPIO_WritePin(DIST4_EN_GPIO_Port, DIST4_EN_Pin, GPIO_PIN_RESET)
 
-#define VCNL4010_I2CADDR_DEFAULT 0x13
+#define VCNL4010_I2CADDR_DEFAULT (0x13 << 1)
 
 // commands and constants
 #define VCNL4010_COMMAND 0x80
@@ -136,7 +158,10 @@ typedef enum {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+volatile uint16_t right_pulse_count; // Licznik impulsow
+volatile uint16_t left_pulse_count; // Licznik impulsow
+volatile uint16_t VCNL4010_data_16;
+volatile uint16_t VCNL4010_data_8;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -191,26 +216,44 @@ int main(void) {
 	LED1_OFF;
 	LED2_OFF;
 	LED3_OFF;
+
+	MOT1_DISABLE;
+	MOT2_DISABLE;
+	MOT1_FORWARD;
+	MOT2_FORWARD;
+	MOT1_SET_SPEED(0);
+	MOT2_SET_SPEED(0);
+
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 
-	MOT1_ENABLE;
-	MOT2_ENABLE;
-	MOT1_FORWARD;
-	MOT2_FORWARD;
-	MOT1_SET_SPEED(30);
-	MOT2_SET_SPEED(30);
+	DISABLE_LEFT;
+	DISABLE_FRONT_LEFT;
+	DISABLE_FRONT;
+	DISABLE_FRONT_RIGHT;
+	DISABLE_RIGHT;
 
-	HAL_Delay(2000);
-	MOT1_DISABLE;
-	MOT2_DISABLE;
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+
+	ENABLE_FRONT;
+	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_PRODUCTID), 1,
+			&VCNL4010_data_8, 1, 1000);
+	if (VCNL4010_data_8 == 0x21)
+		LED1_ON;
+
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		LED2_TOGGLE;
-		HAL_Delay(500);
+		right_pulse_count = TIM2->CNT;
+		left_pulse_count = TIM5->CNT;
+		HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_PRODUCTID),
+				1, &VCNL4010_data_8, 1, 1000);
+		if (VCNL4010_data_8 == 0x21)
+			LED1_ON;
+
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
