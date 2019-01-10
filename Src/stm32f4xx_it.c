@@ -71,9 +71,10 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern TIM_HandleTypeDef htim2;
+extern I2C_HandleTypeDef hi2c3;
 extern TIM_HandleTypeDef htim3;
-extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim10;
+extern TIM_HandleTypeDef htim11;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -215,17 +216,31 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles TIM2 global interrupt.
+  * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
   */
-void TIM2_IRQHandler(void)
+void TIM1_UP_TIM10_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM2_IRQn 0 */
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
 
-  /* USER CODE END TIM2_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim2);
-  /* USER CODE BEGIN TIM2_IRQn 1 */
+  /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim10);
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 
-  /* USER CODE END TIM2_IRQn 1 */
+  /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt.
+  */
+void TIM1_TRG_COM_TIM11_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 0 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim11);
+  /* USER CODE BEGIN TIM1_TRG_COM_TIM11_IRQn 1 */
+
+  /* USER CODE END TIM1_TRG_COM_TIM11_IRQn 1 */
 }
 
 /**
@@ -243,17 +258,17 @@ void TIM3_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles TIM5 global interrupt.
+  * @brief This function handles I2C3 event interrupt.
   */
-void TIM5_IRQHandler(void)
+void I2C3_EV_IRQHandler(void)
 {
-  /* USER CODE BEGIN TIM5_IRQn 0 */
+  /* USER CODE BEGIN I2C3_EV_IRQn 0 */
 
-  /* USER CODE END TIM5_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim5);
-  /* USER CODE BEGIN TIM5_IRQn 1 */
+  /* USER CODE END I2C3_EV_IRQn 0 */
+  HAL_I2C_EV_IRQHandler(&hi2c3);
+  /* USER CODE BEGIN I2C3_EV_IRQn 1 */
 
-  /* USER CODE END TIM5_IRQn 1 */
+  /* USER CODE END I2C3_EV_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
