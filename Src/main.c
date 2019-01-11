@@ -149,8 +149,9 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
+
 	VCNL4010_disableAll();
-	//VCNL4010_FRONT_ENABLE;
+	VCNL4010_FRONT_ENABLE;
 	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
 			1, &VCNL4010_data_8, 1, 100);
 	if (VCNL4010_data_8 == VCNL4010_ANSWER_ID_REVISION)
@@ -236,7 +237,7 @@ int main(void)
 	}
 	*/
 
-	HAL_Delay(2000);
+	HAL_Delay(100);
 	RIGHT_ENCODER_CNT_SET(_INT16_MID);
 	LEFT_ENCODER_CNT_SET(_INT16_MID);
 
@@ -244,17 +245,17 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	VCNL4010_disableAll();
+
 	//VCNL4010_FRONT_ENABLE;
-	setDriveForward(1500);
+	//setDriveForward(1500);
 
 	while (1)
 	{
-		/*
+
 		HAL_Delay(100);
 		VCNL4010_data_16 = VCNL4010_readProximity();
-		test_distance = exp(log(68.000 / VCNL4010_data_16) / 1.765);
-		*/
+		test_distance = exp(log(68000.0 / VCNL4010_data_16) / 1.765);
+
 
     /* USER CODE END WHILE */
 

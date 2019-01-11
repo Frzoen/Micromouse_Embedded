@@ -125,7 +125,7 @@ void PidLeft()
 	//test_left = distanceCoveredLeft
 	double error = desiredPosition - distanceCoveredLeft;
 	double output = Kp * error;
-	setLeftMotor(output);
+	//setLeftMotor(output);
 }
 
 void PidRight()
@@ -140,5 +140,5 @@ void PidRight()
 	//test_left = distanceCoveredLeft
 	double error = desiredPosition - distanceCoveredRight;
 	double output = Kp * error;
-	setRightMotor(output);
+	//setRightMotor(output);
 }
