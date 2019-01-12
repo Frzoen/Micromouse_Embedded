@@ -174,16 +174,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	setDriveForward(180);
-	HAL_Delay(2000);
-	while(!setDriveForward(180))
-	{}
-	HAL_Delay(1000);
-	while(!setDriveForward(180))
-	{}
-	HAL_Delay(1000);
-	while(!setDriveForward(180))
-	{}
+	double const turn90 = 180*3;
+
+	setDriveTurn(turn90);
+
+
 	while (1)
 	{
 

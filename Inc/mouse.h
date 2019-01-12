@@ -31,6 +31,8 @@ typedef struct
 
 	double desiredAngle;
 	double angleCovered;
+	double circleCoveredLeft;
+	double circleCoveredRight;
 }sMouse;
 
 extern sMouse mouse;

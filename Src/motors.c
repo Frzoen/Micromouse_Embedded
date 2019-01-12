@@ -10,8 +10,6 @@
 
 uint16_t test_pwm_left;
 uint16_t test_pwm_right;
-double test_control_left;
-double test_control_right;
 
 void InitMotors()
 {
@@ -28,9 +26,9 @@ void InitMotors()
 
 void setLeftMotor(double control)
 {
-	test_control_left = control;
 	uint16_t pwm = (uint16_t)(control >= 0 ? control : -control);
-
+	MOT_LEFT_SET_SPEED(pwm);
+	/*
 	if(control >= 0)
 	{
 		MOT_LEFT_FORWARD;
@@ -41,14 +39,15 @@ void setLeftMotor(double control)
 		MOT_LEFT_BACKWARD;
 		MOT_LEFT_SET_SPEED(pwm);
 	}
+	*/
 	test_pwm_left = pwm;
 }
 
 void setRightMotor(double control)
 {
-	test_control_right = control;
 	uint16_t pwm = (uint16_t)(control >= 0 ? control : -control);
-
+	MOT_RIGHT_SET_SPEED(pwm);
+	/*
 	if(control >= 0)
 	{
 		MOT_RIGHT_FORWARD;
@@ -59,5 +58,6 @@ void setRightMotor(double control)
 		MOT_RIGHT_BACKWARD;
 		MOT_RIGHT_SET_SPEED(pwm);
 	}
+	*/
 	test_pwm_right = pwm;
 }

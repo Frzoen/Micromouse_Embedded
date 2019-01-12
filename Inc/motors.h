@@ -18,6 +18,8 @@
 // pwm [0...100]
 #define MAX_PWM 						35
 #define TARGET_PWM 						25
+#define MAX_PWM_TURN					20
+#define TARGET_PWM_TURN					12
 
 /* Encoder */
 #define RIGHT_ENCODER_CNT 				(TIM2->CNT)
@@ -27,9 +29,12 @@
 
 /* Phisical */
 #define WHEEL_DIAMETER					29.0
-#define WHEEL_DISPLACEMENT				(WHEEL_DIAMETER * M_PI) // mm per rotation
+#define WHEEL_DISPLACEMENT				(WHEEL_DIAMETER * M_PI) // mm per rotation 91,106186954104003915416658115106
 #define WHEEL_PPR						4096.0	// pulses per rotation
-#define DISPLACEMENT_PER_TICK			(WHEEL_DISPLACEMENT / WHEEL_PPR)
+#define DISPLACEMENT_PER_TICK			(WHEEL_DISPLACEMENT / WHEEL_PPR) // 0,02224272142434179783091227004763
+
+#define ROBOT_RADIUS					25.0
+#define ROBOT_CIRCLE					(2 * M_PI * ROBOT_RADIUS)  // 157,07963267948966192313216916398
 
 /* Motor */
 #define MOT_RIGHT_ENABLE 				HAL_GPIO_WritePin(MOT1_EN_GPIO_Port, MOT1_EN_Pin, GPIO_PIN_RESET)
