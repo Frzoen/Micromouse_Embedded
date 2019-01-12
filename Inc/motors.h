@@ -9,15 +9,14 @@
 #define MOTORS_H_
 
 #include "main.h"
+#include <math.h>
 
 #define _INT16_MAX 						65535
 #define _INT16_MID 						32767
 #define DEFAULT_ENCODER_CNT				_INT16_MID
 
-
-// pwm [max = 65535]
+// pwm [0...100]
 #define MAX_PWM 25
-
 
 /* Encoder */
 #define RIGHT_ENCODER_CNT 				(TIM2->CNT)
@@ -26,7 +25,8 @@
 #define LEFT_ENCODER_CNT_SET(val)		(TIM5->CNT = (val))
 
 /* Phisical */
-#define WHEEL_DISPLACEMENT				196.035 // mm per rotation
+#define WHEEL_DIAMETER					29.0
+#define WHEEL_DISPLACEMENT				(WHEEL_DIAMETER * M_PI) // mm per rotation
 #define WHEEL_PPR						4096.0	// pulses per rotation
 #define DISPLACEMENT_PER_TICK			(WHEEL_DISPLACEMENT / WHEEL_PPR)
 
@@ -44,6 +44,7 @@
 #define MOT_LEFT_SET_SPEED(Duty)		(TIM3->CCR2 = (Duty))
 
 
+void InitMotors();
 void setLeftMotor(double control);
 void setRightMotor(double control);
 

@@ -11,7 +11,6 @@
 #include "stdbool.h"
 #include "main.h"
 
-
 /* Distance sensors */
 #define VCNL4010_FRONT_ENABLE			HAL_GPIO_WritePin(DIST3_EN_GPIO_Port, DIST3_EN_Pin, GPIO_PIN_RESET)
 #define VCNL4010_RIGHT_ENABLE 			HAL_GPIO_WritePin(DIST1_EN_GPIO_Port, DIST1_EN_Pin, GPIO_PIN_RESET)
@@ -61,6 +60,7 @@ typedef enum
 
 
 
+bool InitVCNL4010();
 bool VCNL4010_begin();
 uint8_t VCNL4010_getLEDcurrent(void);
 void VCNL4010_setLEDcurrent(uint8_t c);

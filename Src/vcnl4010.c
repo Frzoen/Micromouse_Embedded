@@ -7,8 +7,80 @@
 
 #include "vcnl4010.h"
 #include "i2c.h"
+#include "mouse.h"
 
-uint8_t test_data_tmp;
+
+/*
+ * 0 - VCNL4010_LEFT
+ * 1 - VCNL4010_FRONT_LEFT
+ * 2 - VCNL4010_FRONT
+ * 3 - VCNL4010_FRONT_RIGHT
+ * 4 - VCNL4010_RIGHT
+ *
+ */
+
+bool InitVCNL4010()
+{
+	uint8_t nrOfDetectedVCNL4010 = 0;
+	uint8_t answerVCNL4010 = 0;
+
+	VCNL4010_disableAll();
+	VCNL4010_FRONT_ENABLE;
+	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
+			1, &answerVCNL4010, 1, 100);
+	if (answerVCNL4010 == VCNL4010_ANSWER_ID_REVISION)
+	{
+		nrOfDetectedVCNL4010++;
+		VCNL4010_begin();
+	}
+
+	VCNL4010_disableAll();
+	VCNL4010_FRONT_LEFT_ENABLE;
+	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
+			1, &answerVCNL4010, 1, 100);
+	if (answerVCNL4010 == VCNL4010_ANSWER_ID_REVISION)
+	{
+		nrOfDetectedVCNL4010++;
+		VCNL4010_begin();
+	}
+
+	VCNL4010_disableAll();
+	VCNL4010_FRONT_RIGHT_ENABLE;
+	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
+			1, &answerVCNL4010, 1, 100);
+	if (answerVCNL4010 == VCNL4010_ANSWER_ID_REVISION)
+	{
+		nrOfDetectedVCNL4010++;
+		VCNL4010_begin();
+	}
+
+	VCNL4010_disableAll();
+	VCNL4010_LEFT_ENABLE;
+	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
+			1, &answerVCNL4010, 1, 100);
+	if (answerVCNL4010 == VCNL4010_ANSWER_ID_REVISION)
+	{
+		nrOfDetectedVCNL4010++;
+		VCNL4010_begin();
+	}
+
+	VCNL4010_disableAll();
+	VCNL4010_RIGHT_ENABLE;
+	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
+			1, &answerVCNL4010, 1, 100);
+	if (answerVCNL4010 == VCNL4010_ANSWER_ID_REVISION)
+	{
+		nrOfDetectedVCNL4010++;
+		VCNL4010_begin();
+	}
+	VCNL4010_disableAll();
+
+	if(nrOfDetectedVCNL4010 == 5)
+	{
+		return true;
+	}
+	return false;
+}
 
 bool VCNL4010_begin()
 {
@@ -19,8 +91,8 @@ bool VCNL4010_begin()
 	HAL_I2C_Mem_Write(&hi2c3, VCNL4010_I2CADDR_DEFAULT, VCNL4010_REG_IRLED,
 					1, &valToSend, 1, 100);
 
-	// Set proximity measurement rate to 13 measurements/s
-	valToSend = 0x03;
+	// Set proximity measurement rate to 31 measurements/s
+	valToSend = 0x04;
 	HAL_I2C_Mem_Write(&hi2c3, VCNL4010_I2CADDR_DEFAULT, VCNL4010_REG_PROXRATE,
 					1, &valToSend, 1, 100);
 
@@ -57,32 +129,20 @@ uint16_t VCNL4010_readProximity(void)
 	uint16_t result = 0;
 
 	HAL_I2C_Mem_Write(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_COMMAND),
-						1, &valToSend, 1, 10);
+						1, &valToSend, 1, 2);
 	while(1)
 	{
 		HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT,
-								(VCNL4010_REG_COMMAND), 1, &proxAnswer, 1, 10);
+								(VCNL4010_REG_COMMAND), 1, &proxAnswer, 1, 2);
 		if(proxAnswer & VCNL4010_COMMAND_PROXIMITYREADY)
 		{
 			HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT,
-						(VCNL4010_REG_PROXIMITYDATA_H), 1, measure, 2, 10);
+						(VCNL4010_REG_PROXIMITYDATA_H), 1, measure, 2, 2);
 			break;
 		}
 	}
 
 	result = ((measure[0] << 8) | measure[1]);
-	if(result)
-	{
-		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_RESET);
-	}
-	else
-	{
-		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
-	}
 
 	return result;
 }
@@ -92,9 +152,34 @@ uint16_t VCNL4010_readAmbient(void)
 	return 0;
 }
 
-
+/*
+ * readings performed each 50ms
+ */
 void VCNL4010_Controller()
 {
+	// example equation - not used now
+	//test_distance = exp(log(68000.0 / VCNL4010_data_16) / 1.765);
 
+	VCNL4010_disableAll();
+	VCNL4010_LEFT_ENABLE;
+	mouse.VCNL4010Readings[0] = VCNL4010_readProximity();
+
+	VCNL4010_disableAll();
+	VCNL4010_FRONT_LEFT_ENABLE;
+	mouse.VCNL4010Readings[1] = VCNL4010_readProximity();
+
+	VCNL4010_disableAll();
+	VCNL4010_FRONT_ENABLE;
+	mouse.VCNL4010Readings[2] = VCNL4010_readProximity();
+
+	VCNL4010_disableAll();
+	VCNL4010_FRONT_RIGHT_ENABLE;
+	mouse.VCNL4010Readings[3] = VCNL4010_readProximity();
+
+	VCNL4010_disableAll();
+	VCNL4010_RIGHT_ENABLE;
+	mouse.VCNL4010Readings[4] = VCNL4010_readProximity();
+
+	VCNL4010_disableAll();
 }
 

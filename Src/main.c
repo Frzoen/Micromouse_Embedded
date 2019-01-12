@@ -74,17 +74,35 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint16_t VCNL4010_data_16;	//	Temporary 16b data for VCNL4010
-uint8_t VCNL4010_data_8;	//	Temporary 8b data for VCNL4010
-int detected_VCNL4010 = 0;
-double test_distance;
+uint8_t Received[10];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void Motor_Controller();
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+
+	uint8_t Data[10]; // Tablica przechowujaca wysylana wiadomosc.
+	double new_PID_value;
+	new_PID_value = 100 * (int)Received[2] + 10 * (int)Received[3] + (int)Received[4]
+			+ 0.1 * (int)Received[6] + 0.01 * (int)Received[7] + 0.01 * (int)Received[8];
+
+	switch (Received[0])
+	{
+	case 'P':
+		HAL_UART_Transmit_IT(&huart1, "Got P\r\n", 7); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
+		break;
+	case 'I':
+		HAL_UART_Transmit_IT(&huart1, "Got I\r\n", 7); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
+		break;
+	case 'D':
+		HAL_UART_Transmit_IT(&huart1, "Got D\r\n", 7); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
+		break;
+	}
+	HAL_UART_Receive_IT(&huart1, Received, 10); // Ponowne w³¹czenie nas³uchiwania
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -131,15 +149,8 @@ int main(void)
 	LED1_OFF;
 	LED2_OFF;
 	LED3_OFF;
-
-	MOT_RIGHT_ENABLE;
-	MOT_LEFT_ENABLE;
-	MOT_RIGHT_FORWARD;
-	MOT_LEFT_FORWARD;
-	MOT_RIGHT_SET_SPEED(0);
-	MOT_LEFT_SET_SPEED(0);
-	InitMouseController();
-
+	HAL_UART_Receive_IT(&huart1, &Received, 10);
+	HAL_UART_Transmit_IT(&huart1, "OK\r\n", 4); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 
@@ -150,112 +161,23 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
 
-	VCNL4010_disableAll();
-	VCNL4010_FRONT_ENABLE;
-	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
-			1, &VCNL4010_data_8, 1, 100);
-	if (VCNL4010_data_8 == VCNL4010_ANSWER_ID_REVISION)
+	if(InitVCNL4010())
 	{
-		detected_VCNL4010++;
-		VCNL4010_begin();
 		LED1_ON;
 	}
-/*
-	VCNL4010_disableAll();
-	VCNL4010_FRONT_LEFT_ENABLE;
-	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
-			1, &VCNL4010_data_8, 1, 100);
-	if (VCNL4010_data_8 == VCNL4010_ANSWER_ID_REVISION)
-	{
-		detected_VCNL4010++;
-		VCNL4010_begin();
-	}
+	InitMotors();
+	InitMouseController();
 
-	VCNL4010_disableAll();
-	VCNL4010_FRONT_RIGHT_ENABLE;
-	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
-			1, &VCNL4010_data_8, 1, 100);
-	if (VCNL4010_data_8 == VCNL4010_ANSWER_ID_REVISION)
-	{
-		detected_VCNL4010++;
-		VCNL4010_begin();
-	}
-
-	VCNL4010_disableAll();
-	VCNL4010_LEFT_ENABLE;
-	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
-			1, &VCNL4010_data_8, 1, 100);
-	if (VCNL4010_data_8 == VCNL4010_ANSWER_ID_REVISION)
-	{
-		detected_VCNL4010++;
-		VCNL4010_begin();
-	}
-
-	VCNL4010_disableAll();
-	VCNL4010_RIGHT_ENABLE;
-	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
-			1, &VCNL4010_data_8, 1, 100);
-	if (VCNL4010_data_8 == VCNL4010_ANSWER_ID_REVISION)
-	{
-		detected_VCNL4010++;
-		VCNL4010_begin();
-	}
-*/
-	/*
-	switch (detected_VCNL4010)
-	{
-	case 1:
-		LED1_ON;
-		LED2_OFF;
-		LED3_OFF;
-		break;
-	case 2:
-		LED1_OFF;
-		LED2_ON;
-		LED3_OFF;
-		break;
-	case 3:
-		LED1_ON;
-		LED2_ON;
-		LED3_OFF;
-		break;
-	case 4:
-		LED1_OFF;
-		LED2_OFF;
-		LED3_ON;
-		break;
-	case 5:
-		LED1_ON;
-		LED2_OFF;
-		LED3_ON;
-		break;
-	default:
-		LED1_OFF;
-		LED2_OFF;
-		LED3_OFF;
-		break;
-	}
-	*/
-
-	HAL_Delay(100);
-	RIGHT_ENCODER_CNT_SET(_INT16_MID);
-	LEFT_ENCODER_CNT_SET(_INT16_MID);
+	HAL_Delay(2000);
+	setDriveForward(2000);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-	//VCNL4010_FRONT_ENABLE;
-	//setDriveForward(1500);
-
 	while (1)
 	{
-
-		HAL_Delay(100);
-		VCNL4010_data_16 = VCNL4010_readProximity();
-		test_distance = exp(log(68000.0 / VCNL4010_data_16) / 1.765);
-
 
     /* USER CODE END WHILE */
 
