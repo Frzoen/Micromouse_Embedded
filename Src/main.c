@@ -169,13 +169,21 @@ int main(void)
 	InitMouseController();
 
 	HAL_Delay(2000);
-	setDriveForward(2000);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+	setDriveForward(180);
+	HAL_Delay(2000);
+	while(!setDriveForward(180))
+	{}
+	HAL_Delay(1000);
+	while(!setDriveForward(180))
+	{}
+	HAL_Delay(1000);
+	while(!setDriveForward(180))
+	{}
 	while (1)
 	{
 

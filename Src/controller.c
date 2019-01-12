@@ -17,6 +17,7 @@ double test_wheelFactor;
 double test_diffRightLeft;
 double test_left_pwm;
 double test_right_pwm;
+double test_sumdiff;
 
 #define MY_ABS(A) ((A) >= 0 ? (A) : (-A))
 
@@ -158,6 +159,8 @@ void PidRight()
 void PidLeftRight(double pathFactor)
 {
 	static const double Kp = 2.0;
+	static const double Ki = 0.02;
+	static double sumDiff;
 
 	// average length reached by robot
 	int16_t diffLeft = (int16_t)DEFAULT_ENCODER_CNT - (int16_t)LEFT_ENCODER_CNT;
@@ -173,27 +176,19 @@ void PidLeftRight(double pathFactor)
 
 	int16_t diffRightLeft = diffRight - diffLeft;
 	test_diffRightLeft = diffRightLeft;
-	double wheelFactor = Kp * diffRightLeft;
-	test_wheelFactor = wheelFactor;
-	test_pathFactor = pathFactor;
 
-	if(pathFactor > MAX_PWM)
-	{
-		pathFactor  = MAX_PWM;
-	}
+	sumDiff += diffRightLeft;
+	double nastawa = Ki * sumDiff;
 
-	// avoid back
-	double leftPwm = MAX_PWM + wheelFactor;
-	test_left_pwm = leftPwm;
-	if(leftPwm < 0)
+	double leftPwm = TARGET_PWM + nastawa;
+	if(MY_ABS(leftPwm) > MAX_PWM)
 	{
-		leftPwm = 0;
+		leftPwm = MAX_PWM;
 	}
-	double rightPwm = MAX_PWM - wheelFactor;
-	test_right_pwm = rightPwm;
-	if(rightPwm < 0)
+	double rightPwm = TARGET_PWM - nastawa;
+	if(MY_ABS(rightPwm) > MAX_PWM)
 	{
-		rightPwm = 0;
+		rightPwm = MAX_PWM;
 	}
 	setLeftMotor(leftPwm);
 	setRightMotor(rightPwm);
