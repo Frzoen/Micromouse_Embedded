@@ -10,6 +10,9 @@
 
 #include "stdbool.h"
 #include "mouse.h"
+#include "vcnl4010.h"
+#include "main.h"
+#include "led_switch.h"
 
 
 #define MAX_WHEEL_FACTOR 10

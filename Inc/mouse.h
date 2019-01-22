@@ -13,27 +13,36 @@
 
 typedef enum
 {
-	MouseStop,
-	MouseForward,
-	MouseTurn
-}eMouseState;
+	MouseStop, MouseForward, MouseTurn
+} eMouseState;
 
 typedef struct
 {
 	eMouseState MouseState;
 
-	uint16_t VCNL4010Readings[5];
+	volatile uint16_t VCNL4010ReadingFront;
+	volatile uint16_t VCNL4010ReadingFrontLeft;
+	volatile uint16_t VCNL4010ReadingFrontRight;
+	volatile uint16_t VCNL4010ReadingLeft;
+	volatile uint16_t VCNL4010ReadingRight;
 
-	double desiredPosition;
-	double distanceCovered;
-	double distanceCoveredLeft;
-	double distanceCoveredRight;
+	volatile double desiredPosition;
+	volatile double distanceCovered;
+	volatile double distanceCoveredLeft;
+	volatile double distanceCoveredRight;
 
 	double desiredAngle;
-	double angleCovered;
-}sMouse;
+		double angleCovered;
+		double circleCoveredLeft;
+		double circleCoveredRight;
+
+	volatile double rightWheelSpeed;
+	volatile double leftWheelSpeed;
+	volatile double rightWheelDesSpeed;
+	volatile double leftWheelDesSpeed;
+
+} sMouse;
 
 extern sMouse mouse;
-
 
 #endif /* MOUSE_H_ */

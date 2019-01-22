@@ -87,7 +87,7 @@ bool VCNL4010_begin()
 	uint8_t valToSend = 0;
 
 	// Set infrared emitter current to 120 mA
-	valToSend = 0x0C;
+	valToSend = 20;
 	HAL_I2C_Mem_Write(&hi2c3, VCNL4010_I2CADDR_DEFAULT, VCNL4010_REG_IRLED,
 					1, &valToSend, 1, 100);
 
@@ -162,23 +162,23 @@ void VCNL4010_Controller()
 
 	VCNL4010_disableAll();
 	VCNL4010_LEFT_ENABLE;
-	mouse.VCNL4010Readings[0] = VCNL4010_readProximity();
+	mouse.VCNL4010ReadingLeft = VCNL4010_readProximity();
 
 	VCNL4010_disableAll();
 	VCNL4010_FRONT_LEFT_ENABLE;
-	mouse.VCNL4010Readings[1] = VCNL4010_readProximity();
+	mouse.VCNL4010ReadingFrontLeft= VCNL4010_readProximity();
 
 	VCNL4010_disableAll();
 	VCNL4010_FRONT_ENABLE;
-	mouse.VCNL4010Readings[2] = VCNL4010_readProximity();
+	mouse.VCNL4010ReadingFront = VCNL4010_readProximity();
 
 	VCNL4010_disableAll();
 	VCNL4010_FRONT_RIGHT_ENABLE;
-	mouse.VCNL4010Readings[3] = VCNL4010_readProximity();
+	mouse.VCNL4010ReadingFrontRight = VCNL4010_readProximity();
 
 	VCNL4010_disableAll();
 	VCNL4010_RIGHT_ENABLE;
-	mouse.VCNL4010Readings[4] = VCNL4010_readProximity();
+	mouse.VCNL4010ReadingRight = VCNL4010_readProximity();
 
 	VCNL4010_disableAll();
 }
