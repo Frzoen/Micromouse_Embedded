@@ -17,8 +17,8 @@
 #define DEFAULT_ENCODER_CNT				_INT16_MID
 
 // pwm [0...100]
-#define MAX_PWM 						30
-#define TARGET_PWM 						20
+#define MAX_PWM 						35
+#define TARGET_PWM 						25
 
 #define MAX_ACCEL_PWM 					1
 #define MAX_DECEL_PWM					1

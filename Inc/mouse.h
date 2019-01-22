@@ -32,9 +32,10 @@ typedef struct
 	volatile double distanceCoveredRight;
 
 	double desiredAngle;
-		double angleCovered;
-		double circleCoveredLeft;
-		double circleCoveredRight;
+	double angleCovered;
+	double circleCoveredLeft;
+	double circleCoveredRight;
+}sMouse;
 
 	volatile double rightWheelSpeed;
 	volatile double leftWheelSpeed;

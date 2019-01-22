@@ -104,7 +104,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		HAL_UART_Transmit_IT(&huart1, "Got D\r\n", 7); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
 		break;
 	}
-	HAL_UART_Receive_IT(&huart1, Received, 10); // Ponowne w³¹czenie nas³uchiwania
+	HAL_UART_Receive_IT(&huart1, Received, 10); // Ponowne wï¿½ï¿½czenie nasï¿½uchiwania
 }
 /* USER CODE END PFP */
 

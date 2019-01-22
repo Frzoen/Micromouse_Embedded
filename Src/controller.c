@@ -16,8 +16,17 @@ double test_diffRightLeft;
 double test_left_pwm;
 double test_right_pwm;
 double test_sumdiff;
+double test_circle_diffLeft;
+double test_circle_diffRight;
+double test_nastawa;
+double test_prop;
 
-#define MY_ABS(A) ((A) >= 0 ? (A) : (-A))
+double test_CNT_left;
+double test_CNT_right;
+
+double test_diffRightLeft_circle;
+
+#define MY_ABS(A) ((A) >= 0 ? (A) : -(A))
 
 void InitMouseController()
 {
@@ -55,12 +64,17 @@ bool setDriveForward(double newGoal)
 	}
 	else
 	{
+		MOT_LEFT_FORWARD;
+		MOT_RIGHT_FORWARD;
 		mouse.desiredPosition = newGoal;
 		mouse.distanceCovered = 0;
 		mouse.distanceCoveredLeft = 0;
 		mouse.distanceCoveredRight = 0;
-		mouse.leftWheelDesSpeed = TARGET_PWM;
-		mouse.rightWheelDesSpeed = TARGET_PWM;
+
+		mouse.desiredAngle = 0;
+		mouse.angleCovered = 0;
+		mouse.circleCoveredRight = 0;
+		mouse.circleCoveredLeft = 0;
 		setMouseState(MouseForward);
 		return true;
 	}
@@ -168,13 +182,16 @@ void DriveTurn()
 	static const double Kp = 0.5;
 	static const double Ki = 0;
 	static double sumDiff;
+
 	// average length reached by robot
 	int32_t diffLeft = MY_ABS((int32_t)DEFAULT_ENCODER_CNT - (int32_t)LEFT_ENCODER_CNT);
 	test_circle_diffLeft = diffLeft;
 	LEFT_ENCODER_CNT = DEFAULT_ENCODER_CNT;
+
 	int32_t diffRight = MY_ABS((int32_t)DEFAULT_ENCODER_CNT - (int32_t)RIGHT_ENCODER_CNT);
 	test_circle_diffRight = diffRight;
 	RIGHT_ENCODER_CNT = DEFAULT_ENCODER_CNT;
+
 	double tmpCircleLeft = ((diffLeft * DISPLACEMENT_PER_TICK) / ROBOT_CIRCLE) * 360.0;
 	// summing it to path of left wheel
 	mouse.circleCoveredLeft += tmpCircleLeft;
@@ -182,25 +199,30 @@ void DriveTurn()
 	// summing it to path of right wheel
 	mouse.circleCoveredRight += tmpCircleRight;
 	mouse.angleCovered += (mouse.circleCoveredLeft + mouse.circleCoveredRight) / 2.0;
+
 	uint32_t diffRightLeft = diffRight - diffLeft;
 	test_diffRightLeft_circle = diffRightLeft;
+
 	double partP = Kp * (mouse.desiredAngle - mouse.circleCoveredRight);
 	test_prop = partP;
 	sumDiff += diffRightLeft;
 	double nastawa = Ki * sumDiff;
 	test_nastawa = nastawa;
+
 	double leftPwm = TARGET_PWM_TURN + nastawa + partP;
 	test_left_pwm = leftPwm;
 	if(MY_ABS(leftPwm) > MAX_PWM_TURN)
 	{
 		leftPwm = MAX_PWM_TURN;
 	}
+
 	double rightPwm = TARGET_PWM_TURN - (nastawa + partP);
 	test_right_pwm = rightPwm;
 	if(MY_ABS(rightPwm) > MAX_PWM_TURN)
 	{
 		rightPwm = MAX_PWM_TURN;
 	}
+
 	if(mouse.angleCovered > mouse.desiredAngle)
 	{
 		setMouseState(MouseStop);
@@ -214,11 +236,11 @@ void DriveTurn()
 
 
 	int32_t diffLeft = MY_ABS((int32_t)DEFAULT_ENCODER_CNT - (int32_t)LEFT_ENCODER_CNT);
-
+	test_circle_diffLeft = diffLeft;
 	LEFT_ENCODER_CNT = DEFAULT_ENCODER_CNT;
 
 	int32_t diffRight = MY_ABS((int32_t)DEFAULT_ENCODER_CNT - (int32_t)RIGHT_ENCODER_CNT);
-
+	test_circle_diffRight = diffRight;
 	RIGHT_ENCODER_CNT = DEFAULT_ENCODER_CNT;
 
 	double tmpCircleLeft = ((diffLeft * DISPLACEMENT_PER_TICK) / ROBOT_CIRCLE) * 360.0;
@@ -244,16 +266,12 @@ void DriveStop()
 {
 	MOT_LEFT_SET_SPEED(0);
 	MOT_RIGHT_SET_SPEED(0);
+
 	mouse.desiredPosition = 0;
 	mouse.distanceCovered = 0;
 	mouse.distanceCoveredLeft = 0;
 	mouse.distanceCoveredRight = 0;
-	mouse.desiredAngle = 0;
-	mouse.angleCovered = 0;
-	mouse.leftWheelDesSpeed = 0;
-	mouse.rightWheelDesSpeed = 0;
-	mouse.rightWheelSpeed = 0;
-	mouse.leftWheelSpeed = 0;
+
 	mouse.desiredAngle = 0;
 	mouse.angleCovered = 0;
 	mouse.circleCoveredLeft = 0;
