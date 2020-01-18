@@ -25,6 +25,8 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "trajectorygenerator.hpp"
+#include "led.hpp"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -47,16 +49,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-class led{
-public:
-  void on(){
-    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-  }
-  void off(){
-    HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-  }
+/* USER CODE BEGIN PV */
 
-};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -77,7 +71,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  led led1;
+
   /* USER CODE END 1 */
 
 
@@ -116,10 +110,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    led1.on();
-    HAL_Delay(300);
-    led1.off();
-    HAL_Delay(300);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
