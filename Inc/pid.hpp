@@ -14,16 +14,15 @@
 
 class Pid
 {
-  float _kp;
-  float _ki;
-  float _kd;
-  float _err;
-  float _errSum;
-  float _errLast;
+  double _kp;
+  double _ki;
+  double _kd;
+  double _err;
+  double _errSum;
+  double _errLast;
 public:
-  Pid(float kp, float ki, float kd);
-  float PidCalculate(float setVal, float readVal);
-  uint16_t PidCalculate(uint16_t setVal, uint16_t readVal);
+  Pid(double kp, double ki, double kd);
+  double PidCalculate(double setVal, double readVal);
 };
 
 
