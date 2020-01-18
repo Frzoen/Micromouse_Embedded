@@ -8,6 +8,8 @@
 #ifndef PID_HPP_
 #define PID_HPP_
 
+#include "main.h"
+
 #define ERR_SUM_MAX		1000
 
 class Pid
