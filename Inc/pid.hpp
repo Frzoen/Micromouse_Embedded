@@ -21,6 +21,7 @@ class Pid
 public:
   Pid(float kp, float ki, float kd);
   float PidCalculate(float setVal, float readVal);
+  uint16_t PidCalculate(uint16_t setVal, uint16_t readVal);
 };
 
 

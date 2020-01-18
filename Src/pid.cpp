@@ -37,3 +37,23 @@ float Pid::PidCalculate(float setVal, float readVal)
 
   return u;
 }
+
+uint16_t Pid::PidCalculate(uint16_t setVal, uint16_t readVal)
+{
+  uint16_t errd, u;
+
+  _err = setVal - readVal;
+  _errSum += _err;
+
+  if (_errSum > ERR_SUM_MAX) {
+    _errSum = ERR_SUM_MAX;
+  } else if (_errSum < -ERR_SUM_MAX) {
+    _errSum = -ERR_SUM_MAX;
+  }
+
+  errd = _errLast - _err;
+
+  u = _kp * _err + _ki * _errSum + _kd * errd;
+
+  return u;
+}
