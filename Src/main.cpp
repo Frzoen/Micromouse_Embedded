@@ -29,6 +29,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "pid.hpp"
+#include "TLE9201SGDriver.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
