@@ -8,7 +8,7 @@
 #include "vcnl4010.h"
 #include "i2c.h"
 #include "mouse.h"
-
+#include "led_switch.h"
 
 /*
  * 0 - VCNL4010_LEFT
@@ -23,8 +23,10 @@ bool InitVCNL4010()
 {
 	uint8_t nrOfDetectedVCNL4010 = 0;
 	uint8_t answerVCNL4010 = 0;
-
 	VCNL4010_disableAll();
+	HAL_Delay(100);
+	LED1_ON;
+	HAL_Delay(100);
 	VCNL4010_FRONT_ENABLE;
 	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
 			1, &answerVCNL4010, 1, 100);
@@ -35,6 +37,10 @@ bool InitVCNL4010()
 	}
 
 	VCNL4010_disableAll();
+	HAL_Delay(100);
+	LED1_OFF;
+	LED2_ON;
+	HAL_Delay(100);
 	VCNL4010_FRONT_LEFT_ENABLE;
 	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
 			1, &answerVCNL4010, 1, 100);
@@ -45,6 +51,10 @@ bool InitVCNL4010()
 	}
 
 	VCNL4010_disableAll();
+	HAL_Delay(100);
+		LED1_ON;
+		LED2_ON;
+		HAL_Delay(100);
 	VCNL4010_FRONT_RIGHT_ENABLE;
 	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
 			1, &answerVCNL4010, 1, 100);
@@ -55,6 +65,11 @@ bool InitVCNL4010()
 	}
 
 	VCNL4010_disableAll();
+	HAL_Delay(100);
+			LED1_OFF;
+			LED2_OFF;
+			LED3_ON;
+			HAL_Delay(100);
 	VCNL4010_LEFT_ENABLE;
 	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
 			1, &answerVCNL4010, 1, 100);
@@ -65,6 +80,11 @@ bool InitVCNL4010()
 	}
 
 	VCNL4010_disableAll();
+	HAL_Delay(100);
+			LED1_ON;
+			LED2_OFF;
+			LED3_ON;
+			HAL_Delay(100);
 	VCNL4010_RIGHT_ENABLE;
 	HAL_I2C_Mem_Read(&hi2c3, VCNL4010_I2CADDR_DEFAULT, (VCNL4010_REG_PRODUCTID),
 			1, &answerVCNL4010, 1, 100);

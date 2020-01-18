@@ -13,7 +13,9 @@
 
 typedef enum
 {
-	MouseStop, MouseForward, MouseTurn
+	MouseStop = 0,		//0
+	MouseForward,		//1
+	MouseTurn			//2
 } eMouseState;
 
 typedef struct
@@ -25,22 +27,6 @@ typedef struct
 	volatile uint16_t VCNL4010ReadingFrontRight;
 	volatile uint16_t VCNL4010ReadingLeft;
 	volatile uint16_t VCNL4010ReadingRight;
-
-	volatile double desiredPosition;
-	volatile double distanceCovered;
-	volatile double distanceCoveredLeft;
-	volatile double distanceCoveredRight;
-
-	double desiredAngle;
-	double angleCovered;
-	double circleCoveredLeft;
-	double circleCoveredRight;
-}sMouse;
-
-	volatile double rightWheelSpeed;
-	volatile double leftWheelSpeed;
-	volatile double rightWheelDesSpeed;
-	volatile double leftWheelDesSpeed;
 
 } sMouse;
 

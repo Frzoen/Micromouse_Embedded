@@ -64,7 +64,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define SW1_GET HAL_GPIO_ReadPin(SW_1_GPIO_Port, SW_1_Pin)
+#define SW2_GET HAL_GPIO_ReadPin(SW_2_GPIO_Port, SW_2_Pin)
+#define SW3_GET HAL_GPIO_ReadPin(SW_3_GPIO_Port, SW_3_Pin)
+#define SW4_GET HAL_GPIO_ReadPin(SW_4_GPIO_Port, SW_4_Pin)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -89,8 +92,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	uint8_t Data[10]; // Tablica przechowujaca wysylana wiadomosc.
 	double new_PID_value;
 	new_PID_value = 100 * (int) Received[2] + 10 * (int) Received[3]
-			+ (int) Received[4] + 0.1 * (int) Received[6]
-			+ 0.01 * (int) Received[7] + 0.01 * (int) Received[8];
+																  + (int) Received[4] + 0.1 * (int) Received[6]
+																											 + 0.01 * (int) Received[7] + 0.01 * (int) Received[8];
 
 	switch (Received[0])
 	{
@@ -126,7 +129,8 @@ int main(void)
 	/* MCU Configuration--------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+	uint8_t status = 0;
+	status |= HAL_Init();
 
 	/* USER CODE BEGIN Init */
 	/* USER CODE END Init */
@@ -140,6 +144,9 @@ int main(void)
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
+	LED1_OFF;
+	LED2_OFF;
+	LED3_OFF;
 	MX_USART1_UART_Init();
 	MX_TIM2_Init();
 	MX_TIM5_Init();
@@ -149,63 +156,40 @@ int main(void)
 	MX_TIM11_Init();
 	MX_TIM10_Init();
 	/* USER CODE BEGIN 2 */
-	LED1_OFF;
-	LED2_OFF;
-	LED3_OFF;
-	HAL_UART_Receive_IT(&huart1, &Received, 10);
-	HAL_UART_Transmit_IT(&huart1, "OK\r\n", 4); // Rozpoczecie nadawania danych z wykorzystaniem przerwan
-	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	status |= HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	status |= HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
 
-	HAL_TIM_Base_Start_IT(&htim10);
-	HAL_TIM_Base_Start_IT(&htim11);
+	status |= HAL_TIM_Base_Start_IT(&htim10);
 
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+	status |= HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	status |= HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
-	if (InitVCNL4010())
+	if(status)
 	{
-		LED1_ON;
+		while(1)
+		{
+			LED2_ON;
+			HAL_Delay(300);
+			LED2_OFF;
+			HAL_Delay(300);
+		}
 	}
+	InitVCNL4010();
+
 	InitMotors();
 	InitMouseController();
 
 	HAL_Delay(2000);
-	double const turn90 = 180*3;
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		// if can go right, do it
-		if(mouse.VCNL4010ReadingRight < VCNL4010_RIGHT_WALL_TRESH)
-		{
-			setMouseState(MouseStop);
-			setDriveTurn(turn90);
-		}
-		// othewise if wall is in front
-		else if (mouse.VCNL4010ReadingFront > VCNL4010_FRONT_WALL_TRESH)
-		{
-			setMouseState(MouseStop);
-			// turn right
-			if(mouse.VCNL4010ReadingRight < VCNL4010_RIGHT_WALL_TRESH)
-			{
-				setDriveTurn(turn90);
-			}
-			else // turn left
-			{
-				setDriveTurn(-turn90);
-			}
-		}
-		// must go forward
-		else
-		{
-			setDriveForward(180);
-		}
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+
 	}
 	/* USER CODE END 3 */
 }
@@ -216,15 +200,12 @@ int main(void)
  */
 void SystemClock_Config(void)
 {
-	RCC_OscInitTypeDef RCC_OscInitStruct =
-	{ 0 };
-	RCC_ClkInitTypeDef RCC_ClkInitStruct =
-	{ 0 };
+	RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
 	/**Configure the main internal regulator output voltage
 	 */
-	__HAL_RCC_PWR_CLK_ENABLE()
-	;
+	__HAL_RCC_PWR_CLK_ENABLE();
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 	/**Initializes the CPU, AHB and APB busses clocks
 	 */
@@ -242,8 +223,8 @@ void SystemClock_Config(void)
 	}
 	/**Initializes the CPU, AHB and APB busses clocks
 	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+			|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
@@ -259,14 +240,6 @@ void SystemClock_Config(void)
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if (htim->Instance == TIM10)
-	{
-		MouseController();
-	}
-	if (htim->Instance == TIM11)
-	{
-		VCNL4010_Controller();
-	}
 }
 
 /* USER CODE END 4 */
@@ -279,7 +252,6 @@ void Error_Handler(void)
 {
 	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
-
 	/* USER CODE END Error_Handler_Debug */
 }
 
@@ -292,7 +264,7 @@ void Error_Handler(void)
  * @retval None
  */
 void assert_failed(uint8_t *file, uint32_t line)
-{
+{ 
 	/* USER CODE BEGIN 6 */
 	/* User can add his own implementation to report the file name and line number,
 	 tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

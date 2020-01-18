@@ -41,7 +41,7 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "led_switch.h"
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -169,10 +169,17 @@ void MX_TIM10_Init(void)
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim10.Init.Period = 10000;
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  LED1_ON;
+  HAL_Delay(300);
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {
     Error_Handler();
   }
+  LED3_ON;
+  HAL_Delay(300);
+  LED1_OFF;
+  LED3_OFF;
+  HAL_Delay(300);
 
 }
 /* TIM11 init function */
@@ -184,10 +191,18 @@ void MX_TIM11_Init(void)
   htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim11.Init.Period = 20000;
   htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  LED2_ON;
+  HAL_Delay(300);
   if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
   {
     Error_Handler();
   }
+  LED3_ON;
+  HAL_Delay(300);
+  LED2_OFF;
+  LED3_OFF;
+  HAL_Delay(300);
+
 
 }
 
