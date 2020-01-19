@@ -25,11 +25,11 @@ void TLE9201SGDriver::SetSpeed(double speed)
 
       speed *= -1;
     }
-
-    if(_reverse)
-      HAL_GPIO_WritePin(_dirGPIOx,_dirPin,GPIO_PIN_SET);
     else
-      HAL_GPIO_WritePin(_dirGPIOx,_dirPin,GPIO_PIN_RESET);
+      if(_reverse)
+	HAL_GPIO_WritePin(_dirGPIOx,_dirPin,GPIO_PIN_SET);
+      else
+	HAL_GPIO_WritePin(_dirGPIOx,_dirPin,GPIO_PIN_RESET);
 
     if (speed > 1.0)
       speed = 1.0;
