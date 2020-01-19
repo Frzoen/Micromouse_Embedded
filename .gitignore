@@ -31,3 +31,9 @@
 # Debug files
 *.dSYM/
 /Debug/
+
+.cproject
+
+.settings/language.settings.xml
+
+SynerMycha.elf.launch
