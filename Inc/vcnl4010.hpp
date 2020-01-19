@@ -32,68 +32,74 @@ class Vcnl4010
 {
 public:
 
-  // pin to enable, disable sensor
-  Vcnl4010(GPIO_TypeDef* gpio, uint16_t pin, uint16_t _treshold);
+	// pin to enable, disable sensor
+	Vcnl4010(GPIO_TypeDef* gpio, uint16_t pin, uint16_t _treshold);
 
-  uint16_t GetLastMeasurement() const
-  {
-    return lastMeasurement;
-  }
+	uint16_t GetLastMeasurement() const
+	{
+		return lastMeasurement;
+	}
 
-  uint16_t GetTreshold() const
-  {
-    return treshold;
-  }
+	uint16_t GetTreshold() const
+	{
+		return treshold;
+	}
 
-  // init sensor
-  // true - init ok, false - something went wrong...
-  bool Init() const;
+	void SetTreshold(uint16_t _treshold)
+	{
+		treshold = _treshold;
+	}
 
-  bool UpdateMeasurement();
 
-  void Enable() const;
+	// init sensor
+	// true - init ok, false - something went wrong...
+	bool Init() const;
 
-  void Disable() const;
+	bool UpdateMeasurement();
 
-  // first - bool indicates if communication via i2c was ok
-  // second - led current, only valid if first is true
-  bool GetLedcurrent(uint8_t& retVal) const;
+	void Enable() const;
 
-  bool SetLedcurrent(uint8_t current) const;
+	void Disable() const;
 
-  bool isMeasurementAboveTreshold() const
-  {
-    return lastMeasurement > treshold;
-  }
+	// first - bool indicates if communication via i2c was ok
+	// second - led current, only valid if first is true
+	bool GetLedcurrent(uint8_t& retVal) const;
 
-  enum class vcnl4010_freq
-  {
-    VCNL4010_1_95 = 0,
-    VCNL4010_3_90625 = 1,
-    VCNL4010_7_8125 = 2,
-    VCNL4010_16_625 = 3,
-    VCNL4010_31_25 = 4,
-    VCNL4010_62_5 = 5,
-    VCNL4010_125 = 6,
-    VCNL4010_250 = 7,
-  };
+	bool SetLedcurrent(uint8_t current) const;
 
-  bool SetFrequency(vcnl4010_freq frequency) const;
+	bool isMeasurementAboveTreshold() const
+	{
+		return lastMeasurement > treshold;
+	}
+
+	enum class vcnl4010_freq
+	{
+		VCNL4010_1_95 = 0,
+				VCNL4010_3_90625 = 1,
+				VCNL4010_7_8125 = 2,
+				VCNL4010_16_625 = 3,
+				VCNL4010_31_25 = 4,
+				VCNL4010_62_5 = 5,
+				VCNL4010_125 = 6,
+				VCNL4010_250 = 7,
+	};
+
+	bool SetFrequency(vcnl4010_freq frequency) const;
 
 private:
 
-  // set parameters of sensor
-  bool SetParameters() const;
+	// set parameters of sensor
+	bool SetParameters() const;
 
-  // last measurement
-  uint16_t lastMeasurement;
+	// last measurement
+	uint16_t lastMeasurement;
 
-  // treshold above which wall is expected to be
-  const uint16_t treshold;
+	// treshold above which wall is expected to be
+	uint16_t treshold;
 
-  // physical connections
-  GPIO_TypeDef* gpioSensor;
-  uint16_t gpioPinSensor;
+	// physical connections
+	GPIO_TypeDef* gpioSensor;
+	uint16_t gpioPinSensor;
 };
 
 

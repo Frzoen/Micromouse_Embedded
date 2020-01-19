@@ -12,6 +12,16 @@
 #include "tim.h"
 #include "gpio.h"
 
+#define ENABLED 1
+#define DISABLED 0
+#define REVERSED 1
+#define NON_REVERSED 0
+#define TIM_CCR1 1
+#define TIM_CCR2 2
+#define TIM_CCR3 3
+#define TIM_CCR4 4
+
+
 class TLE9201SGDriver
 {
   TIM_HandleTypeDef *_htim;
