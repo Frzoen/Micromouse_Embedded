@@ -10,7 +10,9 @@
 
 #include "main.h"
 
-#define ERR_SUM_MAX		1000
+#define ERR_SUM_MAX 1000
+#define MAX_OUTPUT 1
+#define MIN_OUTPUT -MAX_OUTPUT
 
 class Pid
 {
@@ -20,6 +22,9 @@ class Pid
   double _err;
   double _errSum;
   double _errLast;
+  double _maxOutput;
+  double _minOutput;
+  double _errSumMax;
 public:
   Pid(double kp, double ki, double kd);
   double PidCalculate(double setVal, double readVal);

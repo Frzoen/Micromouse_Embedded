@@ -3,7 +3,7 @@
 
 #include "vcnl4010.hpp"
 #include "as5145b.hpp"
-#include "Motor.hpp"
+#include "TLE9201SGDriver.hpp"
 
 class Mouse
 {
@@ -38,8 +38,8 @@ private:
   As5145b leftEncoder;
   As5145b rightEncoder;
 
-  Motor leftMotor;
-  Motor rightMotor;
+  TLE9201SGDriver leftMotor;
+  TLE9201SGDriver rightMotor;
 };
 
 extern Mouse mouse;

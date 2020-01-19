@@ -15,6 +15,9 @@ Pid::Pid(double kp, double ki, double kd)
   _err = 0;
   _errSum = 0;
   _errLast = 0;
+  _maxOutput = MAX_OUTPUT;
+  _minOutput = MIN_OUTPUT;
+  _errSumMax = ERR_SUM_MAX;
 }
 
 
@@ -31,7 +34,7 @@ double Pid::PidCalculate(double setVal, double readVal)
     _errSum = -ERR_SUM_MAX;
   }
 
-  errd = _errLast - _err;
+  errd = _err - _errLast;
 
   u = _kp * _err + _ki * _errSum + _kd * errd;
 
