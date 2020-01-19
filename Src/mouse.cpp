@@ -14,6 +14,9 @@ Mouse::Mouse() :
 		  rightMotor(&htim3,TIM_CCR2,MOT1_EN_GPIO_Port,MOT1_EN_Pin,NON_REVERSED, ENABLED)
 {
 	InitSensors();
+	leftMotor.SetSpeed(0);
+	rightMotor.SetSpeed(0);
+	status = ready;
 }
 
 void Mouse::DisableAllSensors() const
@@ -148,4 +151,15 @@ void Mouse::SetLeftEncoderTicks(uint32_t cnt) const
 void Mouse::SetRightEncoderTicks(uint32_t cnt) const
 {
 	rightEncoder.SetTicks(cnt);
+}
+
+Status Mouse::GetStatus()
+{
+	return status;
+}
+
+Status Mouse::SetStatus(Status _status)
+{
+	status = _status;
+	return status;
 }

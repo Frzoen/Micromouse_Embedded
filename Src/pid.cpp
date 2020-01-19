@@ -21,11 +21,11 @@ Pid::Pid(double kp, double ki, double kd)
 }
 
 
-double Pid::PidCalculate(double setVal, double readVal)
+double Pid::PidCalculate(double err)
 {
   double errd, u;
 
-  _err = setVal - readVal;
+  _err = err;
   _errSum += _err;
 
   if (_errSum > ERR_SUM_MAX) {

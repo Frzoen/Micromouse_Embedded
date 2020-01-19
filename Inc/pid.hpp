@@ -27,7 +27,7 @@ class Pid
   double _errSumMax;
 public:
   Pid(double kp, double ki, double kd);
-  double PidCalculate(double setVal, double readVal);
+  double PidCalculate(double err);
 };
 
 

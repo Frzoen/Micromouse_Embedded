@@ -31,7 +31,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "pid.hpp"
-#include "TLE9201SGDriver.hpp"
+#include "mouse.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,6 +101,8 @@ int main(void)
   MX_TIM11_Init();
   MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
+  mouse.LeftMotorSetSpeed(0.3);
+  mouse.RightMotorSetSpeed(0.3);
 
   /* USER CODE END 2 */
 
