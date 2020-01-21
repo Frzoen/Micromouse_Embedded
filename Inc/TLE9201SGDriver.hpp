@@ -32,6 +32,7 @@ class TLE9201SGDriver
   bool _reverse;
 
 public:
+  TLE9201SGDriver() {}
   TLE9201SGDriver(TIM_HandleTypeDef *htim, uint32_t CCR, GPIO_TypeDef *dirGPIOx, uint16_t dirPin, bool reverse, bool enable);
   void SetSpeed(double speed);
   void SetDirection(bool direction);
