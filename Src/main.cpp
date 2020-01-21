@@ -39,7 +39,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define FLAG_UPDATE_MEASUREMENTS 0b00010000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,6 +48,11 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN PV */
+uint16_t sL,sFL,sF,sFR,sR;
+uint32_t eR, eL;
+volatile uint16_t flags = 0x00;
+Mouse* mousePtr;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,6 +104,14 @@ int main(void)
   MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   Mouse mouse;
+  mousePtr = &mouse;
+  HAL_TIM_Base_Start_IT(&htim10);
+  HAL_TIM_Base_Start_IT(&htim11);
+  led1.Off();
+  led2.Off();
+  led3.Off();
+
+
   mouse.LeftMotorSetSpeed(0.3);
   mouse.RightMotorSetSpeed(0.3);
   /* USER CODE END 2 */
@@ -108,13 +121,14 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-    HAL_GPIO_TogglePin(LED3_GPIO_Port,LED3_Pin);
-    led1.Off();
-    HAL_Delay(300);
-    HAL_GPIO_TogglePin(LED3_GPIO_Port,LED3_Pin);
-    led1.On();
-    HAL_Delay(300);
     /* USER CODE BEGIN 3 */
+    sL = mouse.GetMeasLeftSensor();
+    sFL = mouse.GetMeasLeftMiddleSensor();
+    sF = mouse.GetMeasFrontSensor();
+    sFR = mouse.GetMeasRightMiddleSensor();
+    sR = mouse.GetMeasRightSensor();
+    eL = mouse.GetLeftEncoderTicks();
+    eR = mouse.GetRightEncoderTicks();
   }
   /* USER CODE END 3 */
 }
@@ -162,7 +176,16 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+ if(htim->Instance == TIM10)
+ {
 
+ }
+ if(htim->Instance == TIM11)
+ {
+   mousePtr->UpdateSensorsMeasurements();
+ }
+}
 /* USER CODE END 4 */
 
 /**
