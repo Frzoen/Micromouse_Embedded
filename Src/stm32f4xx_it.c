@@ -200,6 +200,13 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+<<<<<<< Updated upstream
+=======
+  * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
+  */
+
+/**
+>>>>>>> Stashed changes
   * @brief This function handles TIM1 trigger and commutation interrupts and TIM11 global interrupt.
   */
 void TIM1_TRG_COM_TIM11_IRQHandler(void)
