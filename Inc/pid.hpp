@@ -19,6 +19,7 @@ class Pid
   double _kp;
   double _ki;
   double _kd;
+  double _dt;
   double _err;
   double _errSum;
   double _errLast;
@@ -26,8 +27,9 @@ class Pid
   double _minOutput;
   double _errSumMax;
 public:
-  Pid(double kp, double ki, double kd);
+  Pid(double kp, double ki, double kd, double dt);
   double PidCalculate(double error);
+  void PidReset();
 };
 
 

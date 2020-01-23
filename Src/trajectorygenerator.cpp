@@ -8,32 +8,36 @@
 #include "trajectorygenerator.hpp"
 #include <cmath>
 
-TrajectoryGenerator::TrajectoryGenerator(double _xFinish, double _vMax, double _accel) :
-    xFinish(_xFinish),
-    vMax(_vMax),
-    accel(_accel)
+TrajectoryGenerator::TrajectoryGenerator()
 {
     sRef = 0;
     vRef = 0;
+    lastVRef = 0;
     profiler_a = 0;
     profiler_b = 0;
     profiler_c = 0;
     profiler_d = 0;
+}
 
-    double tMax = xFinish/vMax - vMax/accel;
+void TrajectoryGenerator::CreateNewTrajectory(double _xFinish, double _vMax, double _accel)
+{
+  xFinish = _xFinish;
+  vMax = _vMax;
+  accel = _accel;
+  double tMax = xFinish/vMax - vMax/accel;
 
-    if (tMax < 0)
-    {
-      // trapezoidal profile cannot be created for given acceleration
-      // so create triangle profiler
-      vMax = std::sqrt(xFinish * accel);
-      tMax = 0;
-    }
+  if (tMax < 0)
+  {
+    // trapezoidal profile cannot be created for given acceleration
+    // so create triangle profiler
+    vMax = std::sqrt(xFinish * accel);
+    tMax = 0;
+  }
 
-    profiler_a = 0;
-    profiler_b = vMax/accel;
-    profiler_c = vMax/accel + tMax;
-    profiler_d = vMax/accel + tMax + vMax/accel;
+  profiler_a = 0;
+  profiler_b = vMax/accel;
+  profiler_c = vMax/accel + tMax;
+  profiler_d = vMax/accel + tMax + vMax/accel;
 }
 
 void TrajectoryGenerator::CalculateTrajectory(uint16_t t)
@@ -63,6 +67,8 @@ void TrajectoryGenerator::CalculateTrajectory(uint16_t t)
 
   vRef = y * vMax;
 
-  // integrate velocity to get position
-  sRef += vRef * 0.001;
+  // integrate velocity (trapezoidal method) to get position
+  sRef += ((lastVRef + vRef) / 2) * 0.001;
+
+  lastVRef = vRef;
 }

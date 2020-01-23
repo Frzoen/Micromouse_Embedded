@@ -6,7 +6,7 @@
 #include "TLE9201SGDriver.hpp"
 #include "gpio.h"
 
-typedef enum Status{moving = 0, ready} status;
+enum Status{moving = 0, ready};
 
 class Mouse
 {

@@ -13,9 +13,11 @@ public:
 
   }
 
-  uint32_t GetTicks() const
+  int32_t GetTicks() const
   {
-    return htim->Instance->CNT;
+    uint32_t tics = htim->Instance->CNT;
+    htim->Instance->CNT = 32767;
+    return  32767 - tics;
   }
 
   void SetTicks(uint32_t cnt) const

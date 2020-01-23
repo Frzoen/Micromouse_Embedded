@@ -7,7 +7,9 @@ class TrajectoryGenerator
 {
 public:
 
-  TrajectoryGenerator(double _xFinish, double _vMax, double _accel);
+  TrajectoryGenerator();
+
+  void CreateNewTrajectory(double _xFinish, double _vMax, double _accel);
 
   void SetVMax(double _vMax)
   {
@@ -29,19 +31,22 @@ public:
 private:
 
   // length of path in milimeters
-  double const xFinish;
+  double xFinish;
 
   // max velocity in milimeters per second
   double vMax;
 
   // acceleration in milimiters per second square
-  const double accel;
+  double accel;
 
   // reference distance
   double sRef;
 
   // reference velocity
   double vRef;
+
+  // last reference velocity (used for integrating by trapezoidal method)
+  double lastVRef;
 
   /*
    * trapezoidal profiler

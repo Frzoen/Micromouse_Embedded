@@ -7,21 +7,34 @@
 
 #include "logic.hpp"
 
-Logic::Logic()
+Logic::Logic(Mouse* _mouse_p) :
+  mouse_p(_mouse_p),
+  controller(_mouse_p)
 {
+  timeToUpdateSensors = 0;
+}
 
+void Logic::UpdateLogic()
+{
+  RightHandAglorithm();
+  controller.UpdateControll();
+  // update velocity controller
+
+  if(++timeToUpdateSensors == 20) // each 20ms
+  {
+    timeToUpdateSensors = 0;
+    // update sensor measurements
+    mouse_p->UpdateSensorsMeasurements();
+  }
 }
 
 void Logic::RightHandAglorithm()
 {
-	if(true)
-	{
-
-	}
-	else
-	{
-		;
-	}
+  // example, go forward
+  if(mouse_p->GetMeasFrontSensor() < 3000)
+  {
+    controller.InitMove(0.18, 0, 5);
+  }
 }
 
 

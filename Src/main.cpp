@@ -30,6 +30,7 @@
 /* USER CODE BEGIN Includes */
 #include "mouse.hpp"
 #include "led.hpp"
+#include "logic.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,12 +49,25 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN PV */
+volatile bool isTimeToUpdateLogic = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+void TIM1_TRG_COM_TIM11_IRQHandler(void)
+{
+  HAL_TIM_IRQHandler(&htim11);
+}
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if(htim->Instance == TIM11)
+  {
+    isTimeToUpdateLogic = true;
+  }
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -96,24 +110,32 @@ int main(void)
   MX_I2C3_Init();
   MX_TIM3_Init();
   MX_TIM11_Init();
-  MX_TIM10_Init();
   /* USER CODE BEGIN 2 */
   Mouse mouse;
-  mouse.LeftMotorSetSpeed(0.3);
-  mouse.RightMotorSetSpeed(0.3);
+  Logic logic(&mouse);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  // enable interrupts on timer11
+  HAL_TIM_Base_Start_IT(&htim11);
   while (1)
   {
     /* USER CODE END WHILE */
+    /*
     HAL_GPIO_TogglePin(LED3_GPIO_Port,LED3_Pin);
     led1.Off();
     HAL_Delay(300);
     HAL_GPIO_TogglePin(LED3_GPIO_Port,LED3_Pin);
     led1.On();
     HAL_Delay(300);
+    */
+    // ensure that only one update will occur in 1ms
+    if(isTimeToUpdateLogic)
+    {
+      isTimeToUpdateLogic = false;
+      logic.UpdateLogic();
+    }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
