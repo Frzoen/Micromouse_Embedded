@@ -10,7 +10,7 @@ class Controller
 public:
   Controller(Mouse* _mouse);
 
-  bool InitMove(double lin, double ang, double t);
+  void InitMove(double lin, double ang, double vMax);
 
   void UpdateControll();
 
@@ -23,6 +23,9 @@ private:
 
   // time to move
   double finishMoveTime;
+
+  // max velocity of movement
+  double moveMaxVelocity;
 
   // distance to travel in time moveTime
   double moveDistanceLeftMotor;
@@ -41,12 +44,19 @@ private:
   // actual distance travelled by mouse
   double measLeftPos = 0;
   double measRightPos = 0;
+  double measLeftVel = 0;
+  double measRightVel = 0;
 
   // double actual time of move
-  uint16_t actualTimeOfMove;
+  double actualTimeOfMove;
 
   // mouse pointer to access set/get methods from mouse
   Mouse* mouse_p;
+
+  double outLeftPos;
+  double outLeftVel;
+  double outRightPos;
+  double outRightVel;
 
 };
 

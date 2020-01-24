@@ -8,6 +8,13 @@
 #include "trajectorygenerator.hpp"
 #include <cmath>
 
+double test_profa;
+double test_profb;
+double test_profc;
+double test_profd;
+double test_y;
+double test_t;
+
 TrajectoryGenerator::TrajectoryGenerator()
 {
     sRef = 0;
@@ -38,9 +45,18 @@ void TrajectoryGenerator::CreateNewTrajectory(double _xFinish, double _vMax, dou
   profiler_b = vMax/accel;
   profiler_c = vMax/accel + tMax;
   profiler_d = vMax/accel + tMax + vMax/accel;
+
+  test_profa = profiler_a;
+  test_profb = profiler_b;
+  test_profc = profiler_c;
+  test_profd = profiler_d;
+
+  sRef = 0;
+  vRef = 0;
+  lastVRef = 0;
 }
 
-void TrajectoryGenerator::CalculateTrajectory(uint16_t t)
+void TrajectoryGenerator::CalculateTrajectory(double t)
 {
   double y = 0;
 
@@ -48,15 +64,15 @@ void TrajectoryGenerator::CalculateTrajectory(uint16_t t)
   {
     y = 0;
   }
-  else if ((profiler_a <= t) && (t <= profiler_b))
+  else if ((profiler_a < t) && (t <= profiler_b))
   {
     y = (t - profiler_a) / (profiler_b - profiler_a);
   }
-  else if ((profiler_b <= t) && (t <= profiler_c))
+  else if ((profiler_b < t) && (t <= profiler_c))
   {
     y = 1;
   }
-  else if ((profiler_c <= t) && (t <= profiler_d))
+  else if ((profiler_c < t) && (t <= profiler_d))
   {
       y = (profiler_d - t) / (profiler_d - profiler_c);
   }
@@ -66,9 +82,10 @@ void TrajectoryGenerator::CalculateTrajectory(uint16_t t)
   }
 
   vRef = y * vMax;
-
+  test_y = y;
+  test_t = t;
   // integrate velocity (trapezoidal method) to get position
-  sRef += ((lastVRef + vRef) / 2) * 0.001;
+  sRef += ((lastVRef + vRef) / 2) * 0.01;
 
   lastVRef = vRef;
 }

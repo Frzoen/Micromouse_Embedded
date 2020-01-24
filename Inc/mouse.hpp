@@ -22,8 +22,8 @@ public:
 	uint16_t GetMeasRightMiddleSensor() const;
 	uint16_t GetMeasRightSensor() const;
 
-	uint32_t GetLeftEncoderTicks() const;
-	uint32_t GetRightEncoderTicks() const;
+	int32_t GetLeftEncoderTicks() const;
+	int32_t GetRightEncoderTicks() const;
 
 	void SetLeftEncoderTicks(uint32_t cnt) const;
 	void SetRightEncoderTicks(uint32_t cnt) const;

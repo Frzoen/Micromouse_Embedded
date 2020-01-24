@@ -8,8 +8,8 @@ Mouse::Mouse() :
 		  rightSensor(DIST1_EN_GPIO_Port, DIST1_EN_Pin, 2000),
 		  leftEncoder(&htim5),
 		  rightEncoder(&htim2),
-		  leftMotor(&htim3,TIM_CCR1,MOT2_DIR_GPIO_Port,MOT2_DIR_Pin, NON_REVERSED, ENABLED),
-		  rightMotor(&htim3,TIM_CCR2,MOT1_DIR_GPIO_Port,MOT1_DIR_Pin, NON_REVERSED, ENABLED)
+		  leftMotor(&htim3,TIM_CCR1,MOT2_DIR_GPIO_Port,MOT2_DIR_Pin, REVERSED, ENABLED),
+		  rightMotor(&htim3,TIM_CCR2,MOT1_DIR_GPIO_Port,MOT1_DIR_Pin, REVERSED, ENABLED)
 {
 	status = moving;
 	InitSensors();
@@ -17,6 +17,10 @@ Mouse::Mouse() :
 	rightMotor.SetSpeed(0);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+	rightEncoder.SetTicks(32767);
+	leftEncoder.SetTicks(32767);
 	status = ready;
 }
 
@@ -134,12 +138,12 @@ uint16_t Mouse::GetMeasRightSensor() const
 	return rightSensor.GetLastMeasurement();
 }
 
-uint32_t Mouse::GetLeftEncoderTicks() const
+int32_t Mouse::GetLeftEncoderTicks() const
 {
 	return leftEncoder.GetTicks();
 }
 
-uint32_t Mouse::GetRightEncoderTicks() const
+int32_t Mouse::GetRightEncoderTicks() const
 {
 	return rightEncoder.GetTicks();
 }

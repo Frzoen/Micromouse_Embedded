@@ -15,7 +15,7 @@ public:
 
   int32_t GetTicks() const
   {
-    uint32_t tics = htim->Instance->CNT;
+    int32_t tics = htim->Instance->CNT;
     htim->Instance->CNT = 32767;
     return  32767 - tics;
   }

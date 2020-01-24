@@ -16,7 +16,7 @@ public:
     vMax = _vMax;
   }
 
-  void CalculateTrajectory(uint16_t t);
+  void CalculateTrajectory(double t);
 
   double GetSRef() const
   {

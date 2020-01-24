@@ -119,17 +119,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   // enable interrupts on timer11
   HAL_TIM_Base_Start_IT(&htim11);
+  led1.Off();
+  HAL_Delay(500);
+  led1.On();
+  HAL_Delay(500);
   while (1)
   {
     /* USER CODE END WHILE */
-    /*
-    HAL_GPIO_TogglePin(LED3_GPIO_Port,LED3_Pin);
-    led1.Off();
-    HAL_Delay(300);
-    HAL_GPIO_TogglePin(LED3_GPIO_Port,LED3_Pin);
-    led1.On();
-    HAL_Delay(300);
-    */
+
     // ensure that only one update will occur in 1ms
     if(isTimeToUpdateLogic)
     {
